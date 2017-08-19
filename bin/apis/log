@@ -1,0 +1,45 @@
+---##  Übersicht  ##---
+--Create(Pfad = string, level = das aktuelle level, log archivieren)
+--Write(Pfad = string, Text = nachricht die gespeichert werden soll, textlevel = das schreib level für die nachricht, level = das aktuelle level)
+
+---##  Funktionen  ##--
+function Create(sPath, iLevel, bCopy)
+--Variablen
+	local file = 0
+	local iHours = 0
+	local iMinutes = 0
+	local sLocalPath = ""
+	local tPaths = {}
+	
+--Quellcode
+	iHours, iMinutes = advancedMath.Time()
+	
+	if bCopy == true then
+		if fs.exists(sPath) then
+			tPaths = strings.PathBlocks(sPath)
+			sLocalPath = tPaths[#tPaths - 1]..files.LoadLine(sPath, 1)
+			files.ExistsPath(sLocalPath)
+			fs.move(sPath, sLocalPath)
+		end
+	end
+	
+	files.ExistsPath(sPath)
+	file = io.open(sPath, "w")
+	file:writeLine("Logfile "..os.day().." "..iHours.." "..iMinutes..".txt")
+	file:close()
+end
+
+function Write(sPath, sText, iTextlevel, iLevel)
+--Variablen
+	local file = 0
+	local iHours = 0
+	local iMinutes = 0
+	
+--Quellcode
+	if iTextlevel >= iLevel then
+		iHours, iMinutes = advancedMath.Time()
+		file = io.open(sPath, "a")
+		file:writeLine(os.day().." | "..iHours..":"..iMinutes.." - "..Text)
+		file:close()
+	end
+end

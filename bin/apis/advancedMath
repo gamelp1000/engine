@@ -1,0 +1,24 @@
+---##  Übersicht  ##---
+--Time()
+--Round(wert = float, stellen = integer)
+
+---##  Funktionen  ##--
+function Time()
+--Variablen
+	local fTime = 0
+	local iHours = 0
+	local iMinutes = 0
+
+--Quellcode
+	fTime = os.time()
+	iHours = math.floor(fTime)
+	iMinutes = (fTime+10^3)-math.floor(fTime)*10^3
+	iMinutes = iMinutes / 16.666666
+	iMinutes = Round(iMinutes)
+	
+	return iHours, iMinutes
+end
+
+function Round(fValue, iDecimalPlace)
+  return math.floor(fValue * 10^(iDecimalPlace or 0) + 0.5) / 10^(iDecimalPlace or 0)
+end

@@ -1,0 +1,122 @@
+---##  Einstellungs-Variablen  ##---
+local bRunEngine = true
+local sRunFile = ""
+
+---##  Globale Variablen  ##---
+tBluePrint = {}
+tScreen = {}
+
+if bRunEngine == true then
+	tObjects = {}
+	tInput = {}
+	tShortCut = {}
+end
+
+---##  Locale Variablen  ##---
+local sError = ""
+if bRunEngine == true then
+	local tProgramArg = {}
+	local bRunningEnd = false
+	local iProgramCounter = 0
+	local tRunningShortCut = {}
+end
+
+---##  Initialisierung  ##---
+
+function LoadAPIs(sPath)
+-- Variablen
+	local tRoot = {}
+	local i = 0
+	local sError = "0x0000"
+	
+-- locale Funktionen
+	local function LocalRootFolder(sPath)
+	-- Variablen
+		local tRoot = {}
+		local tList = {}
+		local tTemp = {}
+		local i = 0
+		local iCounter = 0
+		local sError = "0x0000"
+
+	-- Quellcode
+		if fs.exists(sPath) then
+			tList = fs.list(sPath)
+			while i < #tList do
+				i = i + 1
+				if fs.isDir(sPath.."/"..tList[i]) then
+					tTemp = LocalRootFolder(sPath.."/"..tList[i])
+					iCounter = 0
+					while iCounter < #tTemp do
+						iCounter = iCounter + 1
+						table.insert(tRoot, tTemp[iCounzer])
+					end
+				else
+					table.insert(tRoot, sPath.."/"..tList[i])
+				end
+			end
+		else
+			sError = "0x0001"
+		end
+
+		return tRoot, sError
+	end
+
+-- Quellcode
+	if fs.exists(sPath) then
+		tRoot, sError = LocalRootFolder(sPath)
+		while i < #tRoot do
+			i = i + 1
+			os.loadAPI(tRoot[i])
+		end
+	else
+		sError = "0x0001"
+	end
+	
+	return sError
+end
+function LoadShortCut(sPath)
+--Variablen
+	local tFile = {}
+
+--Quellcode
+	tFile = files.RootFolder(sPath)
+	tFile = tables.ArrayToTable(tFile)
+	
+	return tFile
+end
+
+---##  Hauptabläufe  ##---
+
+---##  Root  ##---
+
+sError = LoadAPIs("/bin/apis")
+if sError == "0x0000" then
+	tBluePrint = object.LoadObjects("/lib/objects")
+	tShortCut = LoadShortCut("/shortcut")
+	assert(loadfile("/programs/TempClear/TempClear.run"))()
+	
+	if bRunEngine == true then
+		while bRunningEnd == false do
+	
+			if #tRunningShortCut > 0 then
+				iProgramCounter = 0
+				while iProgramCounter < #tRunningShortCut do
+					iProgramCounter = iProgramCounter + 1
+					tProgramArg[iProgramCounter] = assert(loadfile(tRunningShortCut[iProgramCounter]))(tProgramArg[iProgramCounter])
+				end
+			end
+			
+			--vorrübergehend
+			bRunningEnd = true
+		end
+	else
+		shell.run(sRunFile)
+		
+		--reseten des displays
+		term.setTextColor(colors.wihte)
+		term.setBackgroundColor(colors.black)
+		term.setCursorPos(1, 1)
+		term.clear()
+	end
+end

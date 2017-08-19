@@ -1,0 +1,78 @@
+---##  Übersicht  ##---
+--ArrayToTable(Array = mehrdimensionaler Table, optional = integer {Table start/ end information [{, }]: 0 = ohne; 1 = mit})
+--AddTable(table = Ausgangs Table, add = zusammenführender table, optional = Table an bestimmter position zusammen fügen)
+
+---##  Funktionen  ##--
+function ArrayToTable(tArray, iOption)
+--Variablen
+	local tTable = {}
+	local tTemp = {}
+	local i = 0
+	local iCounter = 0
+	
+--Quellcode
+	if iOption == nil then
+		iOption = 0
+	end
+	
+	while i < #tArray do
+		i = i + 1
+		
+		if type(tArray[i]) == "table" then
+			tTemp = ArrayToTable(tArray[i])
+			
+			if iOption == 1 then
+				table.insert(tTable, "{")
+			end
+			
+			iCounter = 0
+			while iCounter < #tTemp do
+				iCounter = iCounter + 1
+				table.insert(tTable, tTemp[iCounter])
+			end
+			
+			if iOption == 1 then
+				table.insert(tTable, "}")
+			end
+			
+		else
+			table.insert(tTable, tArray[i])
+		end
+	end
+	return tTable
+end
+
+function AddTable(tOrginal, tAdd, iOption)
+--Variablen
+	local tTable = {}
+	local iPos = 0
+	local i = 0
+	local sError = "0x0000"
+	
+--Quellcode
+	if iOption == nil then
+		iOption = -1
+		tTable = tOrginal
+	end
+	
+	if iOption >= #tOrginal then
+		return tOrginal, "0x0002"
+	end
+	
+	while iPos < iOption do
+		iPos = iPos + 1
+		table.insert(tTable, tOrginal[iPos])
+	end
+	
+	while i < #tAdd do
+		i = i + 1
+		table.insert(tTable, tAdd[i])
+	end
+	
+	while iPos < tOrginal and iOption ~= -1 do
+		iPos = iPos + 1
+		table.insert(tTable, tOrginal[iPos])
+	end
+	
+	return tTable
+end

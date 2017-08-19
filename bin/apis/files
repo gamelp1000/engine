@@ -1,0 +1,130 @@
+---##  Übersicht  ##---
+--RootFolder(Pfad = string)
+--LoadFile(Pfad = string)
+--SaveFile(Pfad = string, Zeilen = 1D-Table)
+--LoadLine(Pfad = string, Zeile = integer)
+--ExistsPath(Pfad = string)
+
+---##  Funktionen 
+function RootFolder(sPath)
+-- Variablen
+	local tRoot = {}
+	local tList = {}
+	local tTemp = {}
+	local i = 0
+	local sError = "0x0000"
+
+-- Quellcode
+	if fs.exists(sPath) then
+		tList = fs.list(sPath)
+		while i < #tList do
+			i = i + 1
+			if fs.isDir(sPath.."/"..tList[i]) then
+				table.insert(tRoot, "path")
+				table.insert(tRoot, sPath.."/"..tList[i])
+				table.insert(tRoot, "dir")
+				tTemp = files.RootFolder(sPath.."/"..tList[i])
+				table.insert(tRoot, tTemp)
+			else
+				table.insert(tRoot, "file")
+				table.insert(tRoot, sPath.."/"..tList[i])
+			end
+		end
+	else
+		sError = "0x0001"
+	end
+
+	return tRoot, sError
+end
+
+function LoadFile(sPath)
+--Variablen
+	local file = 0
+	local tData = {}
+	local sError = "0x0000"
+	local bEnd = false
+	local sLine = ""
+	local i = 0
+	
+--Quellcode
+	if fs.exists(sPath) then
+		file = io.open(sPath, "r")
+		while bEnd ~= true do
+			i = i + 1
+			sLine = file:read()
+			if sLine ~= nil then
+				table.insert(tData, sLine)
+			else
+				bEnd = true
+			end
+		end
+		file:close()
+	else
+		sError = "0x0001"
+	end
+	
+	return tData, sError
+end
+
+function SaveFile(sPath, tData)
+--Variablen
+	local file = 0
+	local sError = "0x0000"
+	local i = 0
+	
+--Quellcode
+	
+	file = io.open(sPath, "w")
+	while i < #tData do
+		i = i + 1
+		file:writeLine(tData[i])
+	end
+	file:close()
+	
+	return sError
+end
+
+function LoadLine(sPath, iLine)
+--Variablen
+	local file = 0
+	local i = 0
+	local sLine = ""
+	local sError = "0x0000"
+
+--Quellcode
+	if fs.exists(sPath) then
+		file = io.open(sPath, "r")
+		while sLine ~= nil and i < iLine do
+			i = i + 1
+			sLine = file:read()
+			
+			if i == iLine then
+				i = iLine
+			end
+			
+			if sLine == nil then
+				sError = "0x0001"
+			end
+		end
+		file:close()
+	else
+		sError = "0x0001"
+	end
+	
+	return sLine
+end
+
+function ExistsPath(sPath)
+--Variablen
+	local tPaths = {}
+	local iCounter = 0
+	
+--Quellcode
+	tPaths = strings.PathBlocks(sPath)
+	while iCounter < #tPaths - 1 do
+		iCounter = iCounter + 1
+		if fs.exists(tPaths[iCounter]) == false or fs.isDir(tPaths[iCounter]) == false then
+			fs.makeDir(tPaths[iCounter])
+		end
+	end
+end

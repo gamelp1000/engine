@@ -1,0 +1,112 @@
+---##  Übersicht  ##---
+--LoadObjects(Pfad = string)
+
+---##  Funktionen  ##--
+function LoadObjects(sPath)
+--Variablen
+	local tList = {}
+	local tObjects = {}
+	local sError = "0x0000"
+	
+--locale Funktionen
+	local function ObjectSyntax(tFile, iLine)
+	--Variablen
+		local tObjects = {}
+		local tTemp = {}
+		local iValue = 0
+		local bEnd = false
+		
+	
+	--Quellcode
+		if iLine == nil then
+			iLine = 0
+		end
+		
+		while iLine < #tFile and bEnd == false do
+			iLine = iLine + 1
+			if string.find(tFile[iLine], "!") ~= nil then
+				if string.find(tFile[iLine], ":") ~= nil then
+					table.insert(tObjects, string.sub(tFile[iLine],  string.find(tFile[iLine], "!") + 1, string.find(tFile[iLine], ":") - 2))
+				elseif string.find(tFile[iLine], "{") ~= nil then
+					table.insert(tObjects, string.sub(tFile[iLine],  string.find(tFile[iLine], "!") + 1, string.find(tFile[iLine], "{") - 1))
+				end
+			end
+			
+			if string.find(tFile[iLine], ":") ~= nil then
+				if string.find(tFile[iLine], '"') ~= nil then
+					table.insert(tObjects, string.sub(tFile[iLine],  string.find(tFile[iLine], '"') + 1, string.find(tFile[iLine], '"', string.find(tFile[iLine], '"') + 1) - 1))
+				elseif string.find(tFile[iLine], '_') ~= nil then
+					table.insert(tObjects, string.sub(tFile[iLine],  string.find(tFile[iLine], '_') + 1, string.find(tFile[iLine], '_', string.find(tFile[iLine], '_') + 1) - 1))
+				else
+					iValue = strings.StringToInteger(string.sub(tFile[iLine],  string.find(tFile[iLine], ":") + 2))
+					table.insert(tObjects, iValue)
+				end
+			end
+			
+			if string.find(tFile[iLine], "}") ~= nil then
+				bEnd = true
+			end
+			
+			if string.find(tFile[iLine], "{") ~= nil then
+				tTemp, iLine = ObjectSyntax(tFile, iLine)
+				table.insert(tObjects, tTemp)
+			end
+		end
+				
+		return tObjects, iLine
+	end
+	
+	local function SearchObject(tList)
+	--Variablen
+		local tObjects = {}
+		local tFile = {}
+		local iFile = 0
+		local i = 0
+		local iSearch = 0
+	
+	--Quellcode
+		while iFile < #tList do
+			iFile = iFile + 1
+			if tList[iFile] == "file" then
+				iFile = iFile + 1
+				tFile = files.LoadFile(tList[iFile])
+				tFile = ObjectSyntax(tFile)
+				
+				iSearch = 0
+				while iSearch < #tFile do
+					iSearch = iSearch + 1
+					if tFile[iSearch] == "type" then
+						table.insert(tObjects, tFile[iSearch + 1])
+						iSearch = #tFile
+					end
+				end
+				
+				table.insert(tObjects, tFile)
+				
+			elseif tList[iFile] == "dir" then
+				iFile = iFile + 1
+				tFile = SearchObject(tList[iFile])
+				
+				i = 0
+				while i < #tFile do
+					i = i + 1
+					table.insert(tObjects, tFile[i])
+				end
+			end
+		end
+		
+		return tObjects
+	end
+
+--Quellcode
+	if fs.exists(sPath) then
+		tList = files.RootFolder(sPath)
+		if #tList > 0 then
+			tObjects = SearchObject(tList)
+		end
+	else
+		sError = "0x0001"
+	end
+	
+	return tObjects, sError
+end

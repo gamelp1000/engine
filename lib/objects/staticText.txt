@@ -1,0 +1,24 @@
+{
+	--configs
+	!name : "name"
+	!type : "staticText"
+	!text : "text"
+	!maxLeangth : 10
+	
+	--position
+	!pos{
+		!x : 0
+		!y : 0
+	}
+	--backgroundarea and color
+	!color{
+		!textColor : _white_
+		!backgroundColor : _black_
+		
+		--rectangle position
+		!startX : 0
+		!startY : 0
+		!endX : 0
+		!endY : 0
+	}
+}

@@ -1,0 +1,87 @@
+---##  Übersicht  ##---
+--StringToTable(text = string)
+--StringToInteger(text = string)
+--PathBlocks(Pfad = string)
+
+---##  Funktionen  ##--
+function StringToTable(sText)
+--Variablen
+	tText = {}
+	i = 0
+
+--Quellcode
+	while i < string.len(sText) do
+		i = i + 1
+		table.insert(tText, string.sub(sText, i, i))
+	end
+
+	return tText
+end
+
+function StringToInteger(sText)
+--Variablen
+	local tText = {}
+	local iText = 0
+	local i = 0
+	local iValue = 0
+	local sError = "0x0000"
+
+--Quellcode
+	tText = strings.StringToTable(sText)
+	while i < #tText do
+		i = i + 1
+		if tText[i] == "0" then
+			iValue = 0
+		elseif tText[i] == "1" then
+			iValue = 1
+		elseif tText[i] == "2" then
+			iValue = 2
+		elseif tText[i] == "3" then
+			iValue = 3
+		elseif tText[i] == "4" then
+			iValue = 4
+		elseif tText[i] == "5" then
+			iValue = 5
+		elseif tText[i] == "6" then
+			iValue = 6
+		elseif tText[i] == "7" then
+			iValue = 7
+		elseif tText[i] == "8" then
+			iValue = 8
+		elseif tText[i] == "9" then
+			iValue = 9
+		else
+			iValue = 10
+		end
+		
+		if iValue == 10 then
+			i = #tText
+			sError = "0x0002"
+			iText = nil
+		else
+			iText = (iText * 10) + iValue
+		end
+	end
+	
+	return iText, sError
+end
+
+function PathBlocks(sPath)
+--Variablen
+	local tPath = {}
+	local i = 0
+	local iBackslash = 0
+	local bEnd = false
+	
+--Quellcode
+	while bEnd == false do
+		iBackslash = string.find(sPath, "/",  iBackslash + 1)
+		if iBackslash == nil then
+			bEnd = true
+		else
+			table.insert(tPath, string.sub(sPath, 1, iBackslash - 1))
+		end
+	end
+	
+	return tPath
+end

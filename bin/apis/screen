@@ -1,0 +1,27 @@
+---##  Übersicht  ##---
+--Draw(screen = 3D-table {[x][y][1 = background, 2 = textcolor, 3 = zeichzen]} in der auflösung des bindschirms)
+--Construct(screen = 3D-table {[x][y][1 = background, 2 = textcolor, 3 = zeichzen, 4 = objectname, 5 = object-layer]} in einer auch höheren auflösung des bindschirms)
+
+---##  Funktionen  ##--
+function Draw(tScreen)
+--Variablen
+	local iX = 0
+	local iY = 0
+
+--Quellcode
+	while iX < #tScreen do
+		iX = iX + 1
+		
+		iY = 0
+		while iY < #tScreen[iX] do
+			iY = iY + 1
+			term.setCursorPos(x, y)
+			term.setBackgroundColor(tScreen[iX][iY][1])
+			term.setTextColor(tScreen[iX][iY][2])
+			term.write(tScreen[iX][iY][3])
+		end
+	end
+end
+
+function Construct(tScreen)
+end
