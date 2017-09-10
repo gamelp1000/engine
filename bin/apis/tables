@@ -19,7 +19,7 @@ function ArrayToTable(tArray, iOption)
 		i = i + 1
 		
 		if type(tArray[i]) == "table" then
-			tTemp = ArrayToTable(tArray[i])
+			tTemp = ArrayToTable(tArray[i], iOption)
 			
 			if iOption == 1 then
 				table.insert(tTable, "{")

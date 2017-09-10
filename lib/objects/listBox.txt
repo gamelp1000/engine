@@ -1,8 +1,7 @@
 --configs
 !name : "name"
-!type : "staticText"
-!text : "text"
-!maxLeangth : 10
+!type : "listBox"
+!value : "table"
 
 --position
 !pos{

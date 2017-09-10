@@ -1,5 +1,6 @@
 ---##  Übersicht  ##---
 --LoadObjects(Pfad = string)
+--Create(name = string, tpye = string, blueprint = table aller objekttypen, objektliste = table aller erzeugten objekte)
 
 ---##  Funktionen  ##--
 function LoadObjects(sPath)
@@ -108,5 +109,67 @@ function LoadObjects(sPath)
 		sError = "0x0001"
 	end
 	
+	return tObjects, sError
+end
+
+function Create(sName, sType, tBluePrint, tObjects)
+--Variablen
+	local tLocalObject = {}
+	local iType = 0
+	local i = 0
+	local sError = "0x0001"
+
+--Locale Funktionen
+	local function TableCreate(tBluePrint)
+	--Variablen
+		local tObject = {}
+		local i = 0
+		
+	--Quellcode
+		while i < tBluePrint do
+			i = i + 1
+			if type(tBluePrint[i]) == "table" then
+				table.insert(tObject, TableCreate(tBluePrint[i]))
+			else
+				i = i + 1
+				table.insert(tObject, tBluePrint[i])
+			end
+		end
+		
+		return tObject
+	end
+	
+--Quellcode
+	while iType < #tBluePrint and bFound == false do
+		iType = iType + 1
+		if tBluePrint[iType] == sType then
+			while i < #tBluePrint[iType] do
+				i = i + 1
+				if type(tBluePrint[iType][i]) == "table" then
+					table.insert(tLocalObject, TableCreate(tBluePrint[iType][i]))
+				
+				else
+					if tBluePrint[iType][i] == "name" then
+						i = i + 1
+						table.insert(tLocalObject, sName)
+				
+					elseif tBluePrint[iType][i] == "value" then
+						i = i + 1
+						table.insert(tLocalObject, {})
+				
+					else
+						i = i + 1
+						table.insert(tLocalObject, tBluePrint[iType][i])
+				
+					end
+					
+				end
+			end
+			
+			sError = "0x0000"
+			table.insert(tObjects, tLocalObject)
+		end
+	end
+
 	return tObjects, sError
 end

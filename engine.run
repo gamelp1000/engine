@@ -77,13 +77,24 @@ function LoadAPIs(sPath)
 end
 function LoadShortCut(sPath)
 --Variablen
+	local tData = {}
 	local tFile = {}
+	local i = 0
+	local sError = "0x0000"
 
 --Quellcode
 	tFile = files.RootFolder(sPath)
 	tFile = tables.ArrayToTable(tFile)
 	
-	return tFile
+	while i < #tFile do
+		i = i + 1
+		if tFile[i] == "file" then
+			i = i + 1
+			table.insert(tData, tFile[i])
+		end
+	end
+	
+	return tData, sError
 end
 
 ---##  Hauptabläufe  ##---
@@ -93,22 +104,45 @@ end
 sError = LoadAPIs("/bin/apis")
 if sError == "0x0000" then
 	tBluePrint = object.LoadObjects("/lib/objects")
-	tShortCut = LoadShortCut("/shortcut")
+	tShortCut, sError = LoadShortCut("/shortcut")
 	assert(loadfile("/programs/TempClear/TempClear.run"))()
-	
+		
 	if bRunEngine == true then
-		while bRunningEnd == false do
-	
-			if #tRunningShortCut > 0 then
-				iProgramCounter = 0
-				while iProgramCounter < #tRunningShortCut do
-					iProgramCounter = iProgramCounter + 1
-					tProgramArg[iProgramCounter] = assert(loadfile(tRunningShortCut[iProgramCounter]))(tProgramArg[iProgramCounter])
+		if sError == "0x0000" then
+			--while true do
+				
+				sleep(0.1)
+				
+				
+				-- Programauswahl
+				local bProgramSelect = true
+				while bProgramSelect == false do
+					print("text")
+					
+					--bRunEngine = true
+					--bProgramSelect = true
 				end
-			end
 			
-			--vorrübergehend
-			bRunningEnd = true
+				-- Programme Ausführen
+				while bRunningEnd == false do
+			
+					if #tRunningShortCut > 0 then
+						iProgramCounter = 0
+						while iProgramCounter < #tRunningShortCut do
+							iProgramCounter = iProgramCounter + 1
+							tProgramArg[iProgramCounter] = assert(loadfile(tRunningShortCut[iProgramCounter]))(tProgramArg[iProgramCounter])
+						end
+						
+						sleep(0.1)
+					end
+					
+			
+					--vorrübergehend
+					bRunningEnd = true
+				end
+			
+			--end
+		
 		end
 	else
 		shell.run(sRunFile)

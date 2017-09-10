@@ -77,7 +77,8 @@ function SaveFile(sPath, tData)
 	file = io.open(sPath, "w")
 	while i < #tData do
 		i = i + 1
-		file:writeLine(tData[i])
+		--file.writeLine(tData[i])
+		file:write(tData[i].."\n")
 	end
 	file:close()
 	

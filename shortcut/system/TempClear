@@ -1,0 +1,2 @@
+local tArgs = {...}
+return assert(loadfile("/programs/TempClear/TempClear.run"))(tArgs)
